@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingfeng.oa.dao.ClaimVoucherDao">
+    <resultMap id="claimVoucher" type="ClaimVoucher">
+        <!--七个基本属性-->
+        <id property="id" column="id" javaType="int"/>
+        <result property="cause" column="cause" javaType="String"/>
+        <result property="createSn" column="create_sn" javaType="String"/>
+        <result property="createTime" column="create_time" javaType="java.util.Date"/>
+        <result property="nextDealSn" column="next_deal_sn" javaType="String"/>
+        <result property="totalAmount" column="total_amount" javaType="Double"/>
+        <result property="status" column="status" javaType="String"/>
+        <!--创建者的相关的名字和职位-->
+        <association property="creater" column="create_sn" javaType="Employee">
+            <!--两个关联对象，只列我们关心的的姓名和职位
+             字段名设置sql语句中的别名来处理-->
+            <result property="name" column="cname" javaType="String"/>
+            <result property="post" column="cpost" javaType="String"/>
+        </association>
+        <!--处理人的名字和职位-->
+        <association property="dealer" column="next_deal_sn" javaType="Employee">
+            <result property="name" column="dname" javaType="String"/>
+            <result property="post" column="dpost" javaType="String"/>
+        </association>
+    </resultMap>
+
+    <!--向item的表里面插入附属信息，插入之前没法知道这个里面的ClaimVoucher主键的
+    插入完以后数据库生成的主键，获取自动数据库生成的主键
+    打开useGeneratedKeys主键生成的功能，然后通过keyProperty来设定哪个对象来设定为主键id
+    当你执行insert方法时候，报销单这个id属性是没有值，当执行完后mybatis会自动把主键设置到声明的属性里面-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="ClaimVoucher">
+        insert into claim_voucher(cause,create_sn,create_time,next_deal_sn,total_amount,status)
+        values(#{cause},#{createSn},#{createTime},#{nextDealSn},#{totalAmount},#{status})
+    </insert>
+    <update id="update" parameterType="ClaimVoucher">
+        update claim_voucher set cause=#{cause},next_deal_sn=#{nextDealSn},total_amount=#{totalAmount},status=#{status} where id=#{id}
+    </update>
+    <delete id="delete" parameterType="Integer">
+        delete from claim_voucher where id=#{id}
+    </delete>
+    <select id="select" resultMap="claimVoucher" parameterType="Integer">
+        select cv.*,ce.name cname,ce.post cpost,d.name dname,d.post dpost
+        from claim_voucher cv
+        left join employee ce on ce.sn=cv.create_sn
+        left join employee d on d.sn = cv.next_deal_sn
+        where cv.id=#{id}
+    </select>
+    <select id="selectByCreateSn" resultMap="claimVoucher" parameterType="String">
+        select cv.*,ce.name cname,ce.post cpost,d.name dname,d.post dpost
+        from claim_voucher cv
+        left join employee ce on ce.sn=cv.create_sn
+        left join employee d on d.sn = cv.next_deal_sn
+        where cv.create_sn=#{csn} order by cv.create_time desc
+    </select>
+    <select id="selectByNextDealSn" resultMap="claimVoucher" parameterType="String">
+        select cv.*,ce.name cname,ce.post cpost,d.name dname,d.post dpost
+        from claim_voucher cv
+        left join employee ce on ce.sn=cv.create_sn
+        left join employee d on d.sn = cv.next_deal_sn
+        where cv.next_deal_sn=#{ndsn} order by cv.create_time desc
+    </select>
+</mapper>

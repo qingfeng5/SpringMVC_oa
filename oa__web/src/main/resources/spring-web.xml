@@ -1,0 +1,43 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <import resource="spring-biz.xml"/>
+
+    <!--开启自动扫描-->
+    <context:component-scan base-package="com.qingfeng.oa.controller"/>
+    <!--需要开启mvc的注解驱动-->
+    <mvc:annotation-driven/>
+
+    <!--静态资源交给servlet，请求一个静态图片，一个静态页面交给springmvc是没有必要的-->
+    <mvc:default-servlet-handler/>
+
+    <!--配置视图转换器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--视图转换器至少指定三个属性-->
+        <!--第一个是转化格式-->
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <!--第二个是前缀配置-->
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <!--第一个是后缀-->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--配置登录界面的拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--拦截所有路径-->
+            <mvc:mapping path="/**"/>
+            <!--用哪个对象来拦截-->
+            <bean class="com.qingfeng.oa.global.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+</beans>

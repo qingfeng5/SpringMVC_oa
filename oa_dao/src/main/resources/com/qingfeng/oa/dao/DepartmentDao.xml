@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingfeng.oa.dao.DepartmentDao">
+
+    <!--定义的resultmap结果集
+    每一个字段跟每一个属性进行匹配-->
+    <resultMap id="department" type="Department">
+        <!--主键用id-->
+        <id property="sn" column="sn" javaType="String"/>
+        <!--非主键用result-->
+        <result property="name" column="name" javaType="String"/>
+        <result property="address" column="address" javaType="String"/>
+
+    </resultMap>
+
+    <!--sql语句填写-->
+    <!--sql语句填写 insert是要department中一致-->
+    <insert id="insert" parameterType="Department">
+        insert  into department value(#{sn},#{name},#{address})
+    </insert>
+
+    <update id="update" parameterType="Department">
+        update department set name =#{name},address=#{address} where sn=#{sn}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        delete from department where sn=#{sn}
+    </delete>
+
+    <!--因为查询是要获取结果的，查询信息的，必须配置resultMap这个值
+    resultMap通常配置在顶部-->
+    <select id="select" parameterType="String" resultMap="department">
+        select *from department where sn=#{sn}
+    </select>
+
+    <select id="selectAll" resultMap="department">
+        select *from department
+    </select>
+</mapper>
+

@@ -1,0 +1,3 @@
+dao层的接口映射文件是在resources文件下
+新建文件夹方式   com\qingfeng\oa\dao
+文件接口与映射文件必须在同一目录下
