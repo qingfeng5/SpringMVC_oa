@@ -4,6 +4,4 @@
 
 实现Dao层、Service层、Controller层设计开发
 
-实现使用Spring标签库、Spring拦截器
 
-对逐层审核进行划分
